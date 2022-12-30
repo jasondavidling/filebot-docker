@@ -1,0 +1,41 @@
+version: '3'
+services:
+  filebot:
+    image: jlesage/filebot
+    container_name: filebot
+    hostname: filebot
+    environment:
+      PUID: 0
+      PGID: 100
+      TZ: Europe/London
+      UMASK_SET: 022 # optional
+      AMC_INTERVAL: 180 # Time (in seconds) between each invocation of the Automated Media Center (AMC) script
+      AMC_INPUT_STABLE_TIME: 10 # Time (in seconds) during which properties (e.g. size, time, etc) of files 
+                                 # in the watch folder need to remain the same before invoking the Automated Media Center (AMC) script. 
+                                 # This is to avoid processing the watch folder while files are being copied.
+      AMC_MATCH_MODE: opportunistic
+      AMC_ACTION: move
+      AMC_ARTWORK: y
+      AMC_MUSIC_FORMAT: /audio/{n} - {album}.({y})/{pi.pad(2)+' - '}{t}
+      AMC_MOVIE_FORMAT: /output/movies/{n} ({y})/{n} ({y})
+      AMC_SERIES_FORMAT: /output/tvSeries/{ny}{'/Season '+s.pad(2)}/{n}.{s00e00} - {t}
+      AMC_CUSTOM_OPTIONS: --conflict auto --def clean=y --def useExtendedFileAttributes=false --def emby="172.18.0.4:e67cedb6278846ba8fbab4dbe895b28e"
+      PROXY_LOCATION: filebot
+      VIRTUAL_HOST: filebot.steelwind.net.lan
+    ports:
+      - 5901:5900
+    volumes:
+      - ${VOLUMEA_MOUNT}/datastore/filebot:/config:rw
+      - ${VOLUMEB_MOUNT}/video/movies:/output/movies:rw
+      - ${VOLUMEC_MOUNT}/downloads:/downloads:rw
+      - ${VOLUMEC_MOUNT}/processing:/processing:rw
+      - ${VOLUMEC_MOUNT}/watch:/watch:rw
+      - ${VOLUMEC_MOUNT}/audio/music/_new:/audio:rw
+      - ${VOLUMEC_MOUNT}/video/tvSeries:/output/tvSeries:rw
+    restart: unless-stopped
+    networks:
+      - steelwind-net
+
+networks:
+  steelwind-net:
+    external: true
