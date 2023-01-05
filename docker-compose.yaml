@@ -5,9 +5,12 @@ services:
     container_name: filebot
     hostname: filebot
     environment:
-      PUID: 0
-      PGID: 100
+      USER_ID: 0
+      GROUP_ID: 100
+      DISPLAY_HEIGHT: 1080
+      DISPLAY_WIDTH: 1920
       TZ: Europe/London
+      LANG: en_UK.UTF-8
       UMASK_SET: 022 # optional
       AMC_INTERVAL: 180 # Time (in seconds) between each invocation of the Automated Media Center (AMC) script
       AMC_INPUT_STABLE_TIME: 10 # Time (in seconds) during which properties (e.g. size, time, etc) of files 
